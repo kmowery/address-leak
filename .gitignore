@@ -1,2 +1,4 @@
 llvm-build
+WebKit-r151611/WebKitBuild/
 
+*.pyc
