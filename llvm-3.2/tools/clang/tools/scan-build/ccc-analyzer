@@ -345,6 +345,7 @@ my %LinkerOptionMap = (
 );
 
 my %CompilerLinkerOptionMap = (
+  '-Wwrite-strings' => 0,
   '-fobjc-arc' => 0,
   '-fno-objc-arc' => 0,
   '-fobjc-abi-version' => 0, # This is really a 1 argument, but always has '='
@@ -563,6 +564,9 @@ foreach (my $i = 0; $i < scalar(@ARGV); ++$i) {
     if ($Arg eq '-O') { push @LinkOpts,'-O1'; }
     elsif ($Arg eq '-Os') { push @LinkOpts,'-O2'; }
     else { push @LinkOpts,$Arg; }
+
+    # Must pass this along in case of precompiled headers
+    if ($Arg =~ /^-O/) { push @CompileOpts,$Arg; }
     next;
   }
   
@@ -571,11 +575,11 @@ foreach (my $i = 0; $i < scalar(@ARGV); ++$i) {
     next;
   }
   
-#  if ($Arg =~ /^-f/) {
-#    # FIXME: Not sure if the remaining -fxxxx options have no arguments.
-#    push @CompileOpts,$Arg;
-#    push @LinkOpts,$Arg;  # FIXME: Not sure if these are link opts.
-#  }
+  if ($Arg =~ /^-f/) {
+    # FIXME: Not sure if the remaining -fxxxx options have no arguments.
+    push @CompileOpts,$Arg;
+    push @LinkOpts,$Arg;  # FIXME: Not sure if these are link opts.
+  }
   
   # Get the compiler/link mode.
   if ($Arg =~ /^-F(.+)$/) {
