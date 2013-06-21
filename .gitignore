@@ -1,4 +1,18 @@
 llvm-build
 WebKit-r151611/WebKitBuild/
+analysis/
+
+# WebKit generated files
+WebKit-r151611/Source/DOMWindowConstructors.idl
+WebKit-r151611/Source/InternalSettingsGenerated.cpp
+WebKit-r151611/Source/InternalSettingsGenerated.h
+WebKit-r151611/Source/InternalSettingsGenerated.idl
+WebKit-r151611/Source/JSMediaKeyMessageEvent.cpp
+WebKit-r151611/Source/JSMediaKeyMessageEvent.h
+WebKit-r151611/Source/SettingsMacros.h
+WebKit-r151611/Source/SupplementalDependencies.dep
+WebKit-r151611/Source/SupplementalDependencies.txt
+WebKit-r151611/Source/WorkerContextConstructors.idl
 
 *.pyc
+
