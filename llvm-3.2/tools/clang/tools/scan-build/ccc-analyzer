@@ -426,10 +426,12 @@ my %Uniqued;
 
 # Forward arguments to gcc.
 my $Status = system($Compiler,@ARGV);
-if  (defined $ENV{'CCC_ANALYZER_LOG'}) {
-  print "$Compiler @ARGV\n";
+if ($Status) {
+  if  (defined $ENV{'CCC_ANALYZER_LOG'}) {
+    print "$Compiler @ARGV\n";
+  }
+  exit($Status >> 8);
 }
-if ($Status) { exit($Status >> 8); }
 
 # Get the analysis options.
 my $Analyses = $ENV{'CCC_ANALYZER_ANALYSIS'};
@@ -615,6 +617,12 @@ foreach (my $i = 0; $i < scalar(@ARGV); ++$i) {
     push @Files, $Arg;
     next;
   }
+}
+
+# If we're preprocessing, we can't print the compiler invocation, since STDOUT
+# is going somewhere important.
+if ($Action ne 'preprocess' and defined $ENV{'CCC_ANALYZER_LOG'}) {
+  print "$Compiler @ARGV\n";
 }
 
 if ($Action eq 'compile' or $Action eq 'link') {
