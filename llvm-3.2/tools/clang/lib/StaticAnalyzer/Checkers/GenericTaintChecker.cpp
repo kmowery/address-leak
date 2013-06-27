@@ -112,12 +112,15 @@ private:
   /// InvalidArgIndex in the dst arguments to signify that all the non-const
   /// pointer and reference arguments might be tainted on return. If
   /// ReturnValueIndex is added to the dst list, the return value will be
-  /// tainted.
+  /// tainted. If TaintRet is true, the return value of the function will always
+  /// be tainted.
   struct TaintPropagationRule {
     /// List of arguments which can be taint sources and should be checked.
     ArgVector SrcArgs;
     /// List of arguments which should be tainted on function return.
     ArgVector DstArgs;
+
+    bool TaintReturn;
     // TODO: Check if using other data structures would be more optimal.
 
     TaintPropagationRule() {}
@@ -126,8 +129,7 @@ private:
                          unsigned DArg, bool TaintRet = false) {
       SrcArgs.push_back(SArg);
       DstArgs.push_back(DArg);
-      if (TaintRet)
-        DstArgs.push_back(ReturnValueIndex);
+      TaintReturn = TaintRet;
     }
 
     TaintPropagationRule(unsigned SArg1, unsigned SArg2,
@@ -135,8 +137,7 @@ private:
       SrcArgs.push_back(SArg1);
       SrcArgs.push_back(SArg2);
       DstArgs.push_back(DArg);
-      if (TaintRet)
-        DstArgs.push_back(ReturnValueIndex);
+      TaintReturn = TaintRet;
     }
 
     /// Get the propagation rule for a given function.
@@ -469,6 +470,12 @@ GenericTaintChecker::TaintPropagationRule::process(const CallExpr *CE,
     if ((IsTainted = isTaintedOrPointsToTainted(CE->getArg(ArgNum), State, C)))
       break;
   }
+
+  // Should mark the return value?
+  if (TaintReturn) {
+    State = State->add<TaintArgsOnPostVisit>(ReturnValueIndex);
+  }
+
   if (!IsTainted)
     return State;
 

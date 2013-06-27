@@ -166,6 +166,12 @@ void getwTest() {
   int i = getw(stdin); // expected-warning + {{tainted}}
 }
 
+char * gets(char *str);
+void getsTest() {
+  char c[10];
+  char * p = gets(c); // expected-warning + {{tainted}}
+}
+
 typedef long ssize_t;
 ssize_t getline(char ** __restrict, size_t * __restrict, FILE * __restrict);
 int  printf(const char * __restrict, ...);
